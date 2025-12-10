@@ -1,0 +1,428 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Lato:wght@300;400;700&family=Montserrat:wght@300;400;500;700&display=swap');
+
+/* =========================================
+   1. RESET & BASICS
+   ========================================= */
+html {
+  scroll-behavior: smooth;
+  height: 100%;
+  font-size: 16px;
+}
+
+:root {
+  --electric-blue: #05B0FA;
+  --vibrant-red: #E63946;
+  --light-bg: #F0F2F5;
+  --dark-text: #1D3557;
+  --light-text: #adb5bd;
+  --white: #FFFFFF;
+  --border-color: rgba(255, 255, 255, 0.25);
+  --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+  --gold-premium: #ffc107;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #0a0a0a;
+  color: #f0f2f5;
+  background-image: none;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* =========================================
+   2. GLASSMORPHISM COMPONENTS
+   ========================================= */
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.08);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+  color: #f0f2f5;
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-card:hover {
+  box-shadow: 0 8px 32px 0 rgba(0, 123, 255, 0.25);
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.navbar.glass-nav {
+  background: rgba(10, 10, 10, 0.85);
+  -webkit-backdrop-filter: blur(15px);
+  backdrop-filter: blur(15px);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  box-shadow: none;
+}
+
+/* =========================================
+   3. TYPOGRAPHY & NAVBAR
+   ========================================= */
+
+.navbar-brand {
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.nav-link {
+  font-weight: 500;
+  color: var(--light-text) !important;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover, .nav-link.active {
+  color: var(--white) !important;
+}
+
+.navbar-toggler {
+  border-color: var(--border-color);
+}
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+.hero-section h1, main h1, main h2 {
+  text-shadow: 0 2px 15px rgba(0,0,0,0.8);
+}
+.lead, .text-muted, .text-white-50 {
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+}
+
+/* =========================================
+   4. FORMS & INPUTS
+   ========================================= */
+
+.form-control, .form-select, textarea {
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: var(--white) !important;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+/* SOLUCIÓN AL SELECT BLANCO */
+select option {
+    color: #0a0a0a !important; 
+    background-color: var(--white) !important;
+}
+
+.form-control:focus, .form-select:focus, textarea:focus {
+    background: rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 0 0 0.25rem rgba(5, 176, 250, 0.25);
+    border-color: var(--electric-blue);
+    color: var(--white) !important;
+}
+
+.form-control::placeholder, textarea::placeholder {
+    color: rgba(255,255,255,0.4);
+}
+
+/* Floating Labels Fix */
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+  color: var(--electric-blue) !important;
+  opacity: 1;
+  transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+  background-color: transparent !important;
+}
+
+.form-floating label {
+    color: rgba(255,255,255,0.6);
+}
+
+.form-control-color {
+    max-width: 100%;
+    height: 40px;
+    padding: 0.3rem;
+    cursor: pointer;
+}
+
+input[type=range] {
+    accent-color: var(--electric-blue);
+    cursor: pointer;
+}
+
+/* =========================================
+   5. BUTTONS & TABS
+   ========================================= */
+
+.btn {
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: var(--electric-blue);
+  border-color: var(--electric-blue);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background-color: #0490ce;
+  border-color: #0490ce;
+  box-shadow: 0 4px 15px rgba(5, 176, 250, 0.4);
+}
+
+.btn-outline-light:hover {
+    color: #0a0a0a;
+}
+
+.glow-on-hover:hover {
+    box-shadow: 0 0 20px var(--electric-blue);
+    transform: scale(1.02); 
+}
+
+/* Tabs Styles */
+.nav-pills .nav-link {
+    color: var(--light-text);
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    color: var(--white);
+    background-color: rgba(5, 176, 250, 0.2);
+    border: 1px solid var(--electric-blue);
+}
+.nav-pills .nav-link:hover:not(.active) {
+     background-color: rgba(255,255,255,0.05);
+     color: var(--white);
+}
+
+/* =========================================
+   6. PORTFOLIO GRID
+   ========================================= */
+
+.masonry-grid {
+  column-count: 1;
+  column-gap: 1.5rem;
+}
+@media (min-width: 576px) { .masonry-grid { column-count: 2; } }
+@media (min-width: 992px) { .masonry-grid { column-count: 3; } }
+
+.masonry-item {
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 1.5rem;
+  break-inside: avoid;
+  transition: padding 0.3s ease;
+}
+
+.masonry-item img {
+  width: 100%;
+  border-radius: 10px;
+  display: block;
+  transition: border-radius 0.3s ease, border 0.3s ease;
+}
+
+/* =========================================
+   7. ANIMATIONS & EFFECTS
+   ========================================= */
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translate3d(0, 40px, 0); }
+    to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+.fade-in-up {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 8px 3px var(--electric-blue); }
+  50% { box-shadow: 0 0 25px 10px var(--electric-blue); }
+}
+.frame-glow {
+  animation: glow 2.5s ease-in-out infinite;
+}
+
+@keyframes animated-gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.frame-animated-gradient {
+  background: linear-gradient(-45deg, var(--electric-blue), var(--vibrant-red), #ffc107, #23d5ab);
+  background-size: 400% 400%;
+  animation: animated-gradient 5s ease infinite;
+  border-radius: 14px;
+}
+.frame-animated-gradient img {
+    border-radius: 10px !important;
+    border: none !important;
+}
+
+.border-warning {
+    border-color: var(--gold-premium) !important;
+}
+
+/* =========================================
+   8. FOOTER & UTILS
+   ========================================= */
+
+footer { margin-top: auto; }
+footer p { text-shadow: 0 1px 4px black; }
+
+.navbar, .hero-section, main, footer, section {
+  position: relative;
+  z-index: 2;
+}
+
+.modal-backdrop.show {
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  background-color: rgba(0,0,0,0.5);
+  opacity: 1;
+}
+.text-accent { color: var(--electric-blue) !important; }
+.fs-7 { font-size: 0.85rem; }
+
+/* =========================================
+   9. KEN BURNS BACKGROUND (FIX DEL FONDO NEGRO)
+   ========================================= */
+
+#background-ken-burns {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  background-color: #0a0a0a;
+  pointer-events: none;
+}
+
+#background-ken-burns::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(10, 10, 10, 0.5); /* Oscurece las imágenes para leer mejor */
+  z-index: 1;
+}
+
+#background-ken-burns > div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  animation: imageFade 36s linear infinite;
+}
+
+/* Imágenes de fondo (usa placeimg o tus propias URLs) */
+#background-ken-burns > div:nth-child(1) {
+  background-image: url('https://picsum.photos/1920/1080?random=10');
+  animation-delay: 0s;
+  animation-name: imageFade, kenburns-1;
+}
+#background-ken-burns > div:nth-child(2) {
+  background-image: url('https://picsum.photos/1920/1080?random=20');
+  animation-delay: 12s;
+  animation-name: imageFade, kenburns-2;
+}
+#background-ken-burns > div:nth-child(3) {
+  background-image: url('https://picsum.photos/1920/1080?random=30');
+  animation-delay: 24s;
+  animation-name: imageFade, kenburns-3;
+}
+
+@keyframes imageFade {
+  0% { opacity: 0; }
+  5% { opacity: 1; }
+  28% { opacity: 1; }
+  33% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@keyframes kenburns-1 {
+  0% { transform: scale(1.1) translate(0, 0); }
+  100% { transform: scale(1) translate(-5%, 5%); }
+}
+@keyframes kenburns-2 {
+  0% { transform: scale(1) translate(5%, -5%); }
+  100% { transform: scale(1.1) translate(0, 0); }
+}
+@keyframes kenburns-3 {
+  0% { transform: scale(1) translate(0, 5%); }
+  100% { transform: scale(1.1) translate(0, 0); }
+}
+
+/* =========================================
+   10. PREVIEW PANEL
+   ========================================= */
+.preview-sticky-panel {
+  position: sticky;
+  top: 100px; /* Adjust based on navbar height */
+  height: calc(100vh - 120px);
+}
+
+#live-preview-container {
+  height: 100%;
+  overflow-y: auto;
+  padding: 1rem;
+  /* Simular un fondo oscuro para que los colores claros resalten */
+  background-color: rgba(10, 10, 10, 0.5);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+#live-preview-container * {
+  transition: all 0.3s ease;
+}
+
+/* =========================================
+   11. NAVBAR BUTTON FIX
+   ========================================= */
+
+/* Boton de navegación desacoplado del color de acento */
+.btn-nav-register {
+  background-color: #05B0FA;
+  border-color: #05B0FA;
+  color: #fff;
+}
+
+.btn-nav-register:hover {
+  background-color: #0490ce;
+  border-color: #0490ce;
+  box-shadow: 0 4px 15px rgba(5, 176, 250, 0.4);
+}
+
+/* =========================================
+   12. IMAGE DETAIL MODAL
+   ========================================= */
+.image-detail-modal-content {
+  background: rgba(20, 20, 20, 0.85);
+  -webkit-backdrop-filter: blur(15px);
+  backdrop-filter: blur(15px);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  color: #f0f2f5;
+  height: 90vh;
+}
+
+#modal-image {
+  width: 100%;
+  height: 90vh;
+  object-fit: contain;
+}
+
+.image-detail-modal-content .modal-header {
+  border-bottom: 1px solid var(--border-color);
+}

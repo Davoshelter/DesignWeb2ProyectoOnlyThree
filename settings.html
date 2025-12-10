@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuración de Diseño - OwnDesign</title>
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js"></script>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg sticky-top glass-nav">
+    <div class="container">
+      <a class="navbar-brand text-white" href="index.html">OwnDesign</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="users.html">Usuarios</a></li>
+          <li class="nav-item"><a class="nav-link active" href="settings.html">Configuración</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-5">
+    <div class="text-center mb-5 fade-in-up">
+      <h1 class="fw-bold display-5 text-white">Panel de Personalización</h1>
+      <p class="lead text-white-50">Define cada detalle de tu identidad digital.</p>
+    </div>
+
+    <div class="row gx-5">
+      <!-- Columna de Controles -->
+      <div class="col-lg-7">
+        <form class="settings-form">
+            <ul class="nav nav-pills mb-4 justify-content-center gap-2" id="pills-tab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="pills-global-tab" data-bs-toggle="pill" data-bs-target="#pills-global" type="button" role="tab"><i class="bi bi-palette-fill me-2"></i>Estilo Global</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab"><i class="bi bi-person-circle me-2"></i>Perfil</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-gallery-tab" data-bs-toggle="pill" data-bs-target="#pills-gallery" type="button" role="tab"><i class="bi bi-grid-3x3 me-2"></i>Galería & Marcos</button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="pills-tabContent">
+                
+                <div class="tab-pane fade show active" id="pills-global" role="tabpanel">
+                    <div class="glass-card p-4">
+                        <h4 class="text-white fw-bold mb-4">Apariencia General</h4>
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label for="fontFamily" class="form-label text-white-50 small fw-bold">TIPOGRAFÍA PRINCIPAL</label>
+                                <select class="form-select mb-3" id="fontFamily">
+                                    <option selected value="'Poppins', sans-serif">Poppins</option>
+                                    <option value="'Roboto', sans-serif">Roboto</option>
+                                    <option value="'Lato', sans-serif">Lato</option>
+                                    <option value="'Montserrat', sans-serif">Montserrat</option>
+                                </select>
+
+                                <label class="form-label text-white-50 small fw-bold">TAMAÑO FUENTE BASE</label>
+                                <div class="d-flex align-items-center bg-transparent border border-secondary rounded p-2 mb-3">
+                                    <i class="bi bi-fonts text-white-50 me-3 fs-5"></i>
+                                    <input type="range" class="form-range flex-grow-1 me-3" id="baseFontSize" min="14" max="20" step="1" value="16">
+                                    <span class="badge bg-secondary" id="baseFontSizeValue">16px</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-white-50 small fw-bold mb-3">PALETA DE COLORES</label>
+                                <div class="d-flex gap-3">
+                                    <div class="flex-grow-1">
+                                        <label for="primaryColor" class="form-label text-white-50 fs-7 mb-1">Acento</label>
+                                        <input type="color" class="form-control form-control-color w-100" id="primaryColor" value="#05B0FA" title="Color principal para botones y enlaces">
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <label for="fontColor" class="form-label text-white-50 fs-7 mb-1">Texto</label>
+                                        <input type="color" class="form-control form-control-color w-100" id="fontColor" value="#f0f2f5" title="Color del texto principal">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="pills-profile" role="tabpanel">
+                    <div class="glass-card p-4">
+                        <h4 class="text-white fw-bold mb-4">Información del Creador</h4>
+                          <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="userName" placeholder="Tu Nombre" value="Alex Rivas">
+                            <label for="userName">Nombre Visible</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <textarea class="form-control" placeholder="Biografía corta" id="userBio" style="height: 100px">Fotógrafo y diseñador gráfico apasionado por capturar la belleza en lo cotidiano.</textarea>
+                            <label for="userBio">Biografía Corta</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="userAvatarFile" class="form-label text-white-50 small fw-bold">FOTO DE PERFIL</label>
+                            <input class="form-control" type="file" id="userAvatarFile" accept="image/*">
+                        </div>
+                        <label for="profileBorderRadius" class="form-label text-white-50 small fw-bold">REDONDEO FOTO DE PERFIL</label>
+                         <div class="d-flex align-items-center bg-transparent border border-secondary rounded p-2">
+                             <input type="range" class="form-range me-3" id="profileBorderRadius" min="0" max="50" step="5" value="50">
+                             <span id="profileBorderRadiusValue" class="badge bg-secondary">50%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="pills-gallery" role="tabpanel">
+                    <div class="glass-card p-4 h-100">
+                        <h4 class="text-white fw-bold mb-4">Bordes y Espaciado</h4>
+                        
+                        <label class="form-label text-white-50 small fw-bold"><i class="bi bi-person-circle me-2"></i>BORDE FOTO PERFIL</label>
+                         <div class="d-flex align-items-center bg-transparent border border-secondary rounded p-2 mb-4">
+                            <input type="color" class="form-control form-control-color border-0 bg-transparent p-0 me-3" id="profileFrameColor" value="#A8DADC" style="width: 40px;" title="Color del borde">
+                            <input type="range" class="form-range flex-grow-1 me-3" id="profileFrameWidth" min="0" max="20" step="1" value="5">
+                            <span class="badge bg-secondary" id="profileFrameWidthValue">5px</span>
+                        </div>
+
+                        <label class="form-label text-white-50 small fw-bold"><i class="bi bi-grid-3x3 me-2"></i>BORDE ÍTEMS GALERÍA</label>
+                        <div class="d-flex align-items-center bg-transparent border border-secondary rounded p-2 mb-4">
+                            <input type="color" class="form-control form-control-color border-0 bg-transparent p-0 me-3" id="galleryFrameColor" value="#FFFFFF" style="width: 40px;" title="Color del borde">
+                            <input type="range" class="form-range flex-grow-1 me-3" id="galleryFrameWidth" min="0" max="20" step="1" value="10">
+                            <span class="badge bg-secondary" id="galleryFrameWidthValue">10px</span>
+                        </div>
+
+                         <label class="form-label text-white-50 small fw-bold"><i class="bi bi-distribute-vertical me-2"></i>ESPACIADO DE GRILLA</label>
+                         <div class="d-flex align-items-center bg-transparent border border-secondary rounded p-2">
+                            <i class="bi bi-arrows-expand text-white-50 me-3 fs-5"></i>
+                            <input type="range" class="form-range flex-grow-1 me-3" id="galleryGap" min="0" max="3" step="0.5" value="1.5">
+                            <span class="badge bg-secondary" id="galleryGapValue">1.5rem</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mt-5 pb-5 border-top border-secondary pt-4">
+                <button type="button" class="btn btn-outline-danger d-flex align-items-center gap-2" id="resetButton">
+                    <i class="bi bi-trash"></i> Restaurar
+                </button>
+                <button type="submit" class="btn btn-primary px-5 py-3 fw-bold shadow-lg glow-on-hover d-flex align-items-center gap-2 fs-5">
+                    <i class="bi bi-save-fill"></i> Guardar
+                </button>
+            </div>
+        </form>
+      </div>
+
+      <!-- Columna de Vista Previa -->
+      <div class="col-lg-5">
+        <div class="preview-sticky-panel">
+          <h4 class="text-white fw-bold mb-3"><i class="bi bi-eye-fill me-2"></i>Vista Previa en Vivo</h4>
+          <div id="live-preview-container" class="glass-card">
+            <header class="text-center p-4">
+              <img src="" id="preview-avatar" alt="Avatar de usuario" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
+              <h4 id="preview-name" class="fw-bold text-white mb-1">Alex Rivas</h4>
+              <p id="preview-bio" class="text-white-50 small">Fotógrafo y diseñador gráfico apasionado por capturar la belleza en lo cotidiano.</p>
+            </header>
+            <main class="p-3">
+<div id="preview-gallery" class="masonry-grid" style="column-count: 2; gap: 0.5rem;">
+              </div>
+            </main>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="py-4 mt-5">
+    <div class="container text-center">
+      <p class="mb-0 text-white-50">&copy; 2025 OwnDesign. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <div class="modal fade" id="saveModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content glass-card border-0">
+        <div class="modal-header border-bottom border-secondary">
+          <h5 class="modal-title text-white fw-bold"><i class="bi bi-check-circle-fill text-success me-2"></i>¡Configuración Guardada!</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-white py-4">
+          <p class="lead fs-6 mb-3">Tu portafolio se ha actualizado con éxito.</p>
+          <p class="text-white-50 small mb-0">Los cambios se han aplicado globalmente a tu sitio.</p>
+        </div>
+        <div class="modal-footer border-top border-secondary">
+          <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Seguir Editando</button>
+           <a href="portfolio.html" id="view-portfolio-button" class="btn btn-primary px-4 fw-bold">Ver Mi Portfolio <i class="bi bi-arrow-right ms-2"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Confirmación de Reseteo -->
+  <div class="modal fade" id="resetConfirmModal" tabindex="-1" aria-labelledby="resetModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content glass-card border-0">
+        <div class="modal-header border-bottom border-danger">
+          <h5 class="modal-title text-white fw-bold" id="resetModalLabel"><i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>Confirmar Restauración</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-white py-4">
+          <p class="lead fs-6 mb-1">¿Estás seguro de que quieres restaurar todas las configuraciones?</p>
+          <p class="text-white-50 small mb-0">Esta acción no se puede deshacer. Se perderán todos los cambios de diseño y perfil.</p>
+        </div>
+        <div class="modal-footer border-top border-secondary">
+          <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" id="confirmResetButton" class="btn btn-danger px-4 fw-bold">Restaurar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/settings.js" defer></script>
+  <script src="js/session-manager.js" defer></script>
+</body>
+</html>

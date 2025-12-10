@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Añadir Imagen - OwnDesign</title>
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js"></script>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg sticky-top glass-nav">
+    <div class="container">
+      <a class="navbar-brand text-white" href="index.html">OwnDesign</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="users.html">Usuarios</a></li>
+          <li class="nav-item"><a class="nav-link" href="settings.html">Configuración</a></li>
+        </ul>
+        <a href="register.html" class="btn btn-nav-register ms-lg-3 mt-2 mt-lg-0">Registro</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="glass-card p-4 p-sm-5">
+          <div class="text-center mb-5">
+            <h1 class="fw-bold display-5 text-white">Añadir Nueva Imagen</h1>
+            <p class="lead text-white-50">Sube tu trabajo y compártelo con el mundo.</p>
+          </div>
+
+          <form id="add-image-form">
+            <div class="mb-4">
+              <label for="imageFile" class="form-label text-white-50 small fw-bold">ARCHIVO DE IMAGEN</label>
+              <input class="form-control" type="file" id="imageFile" accept="image/*" required>
+            </div>
+            
+            <div class="form-floating mb-4">
+              <textarea class="form-control" placeholder="Añade una descripción..." id="imageDescription" style="height: 120px"></textarea>
+              <label for="imageDescription">Descripción</label>
+            </div>
+
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary btn-lg glow-on-hover">Añadir Imagen al Portfolio</button>
+              <a href="#" id="cancel-button" class="btn btn-outline-light">Cancelar y Volver al Portfolio</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="py-4 mt-auto">
+    <div class="container text-center">
+      <p class="mb-0 text-white-50">&copy; 2025 OwnDesign. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/add-image.js" defer></script>
+  <script src="js/session-manager.js" defer></script>
+</body>
+</html>
