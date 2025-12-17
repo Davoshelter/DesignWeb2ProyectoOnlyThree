@@ -23,13 +23,14 @@ html {
 
 body {
   font-family: 'Poppins', sans-serif;
-  background-color: #0a0a0a;
+  background-color: #0a0a0a; /* Vuelve al color negro original */
   color: #f0f2f5;
-  background-image: none;
+  background-image: none; /* Asegura que no haya imagen de fondo */
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   transition: background-color 0.3s ease, color 0.3s ease;
+  padding-top: 80px; /* Mantiene el padding para el menú fijo */
 }
 
 /* =========================================
@@ -50,13 +51,26 @@ body {
 }
 
 .glass-card:hover {
-  box-shadow: 0 8px 32px 0 rgba(0, 123, 255, 0.25);
+  box-shadow: 0 0 20px var(--electric-blue); /* Añade el resplandor azul */
   transform: translateY(-5px);
   background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.4);
+  border-color: var(--electric-blue); /* Resalta el borde */
+}
+
+/* Efecto hover mejorado para las tarjetas de usuario */
+.user-card img {
+  transition: transform 0.3s ease-in-out;
+}
+
+.user-card:hover img {
+  transform: scale(1.1); /* El avatar se agranda */
 }
 
 .navbar.glass-nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1050; /* Por encima del contenido, pero debajo de modales usuales */
   background: rgba(10, 10, 10, 0.85);
   -webkit-backdrop-filter: blur(15px);
   backdrop-filter: blur(15px);
@@ -200,29 +214,33 @@ input[type=range] {
 }
 
 /* =========================================
-   6. PORTFOLIO GRID
+   6. PORTFOLIO GRID ( preparado para Masonry.js)
    ========================================= */
 
 .masonry-grid {
-  column-count: 1;
-  column-gap: 1.5rem;
+  margin: 0 auto; /* Centra el contenedor de la grilla */
 }
-@media (min-width: 576px) { .masonry-grid { column-count: 2; } }
-@media (min-width: 992px) { .masonry-grid { column-count: 3; } }
 
 .masonry-item {
-  display: inline-block;
-  width: 100%;
-  margin-bottom: 1.5rem;
-  break-inside: avoid;
-  transition: padding 0.3s ease;
+  margin-bottom: 1rem;
+  width: 100%; /* Por defecto en móviles */
+}
+
+@media (min-width: 576px) { 
+  .masonry-item {
+    width: 48%; /* 2 columnas con espacio */
+  } 
+}
+@media (min-width: 992px) { 
+  .masonry-item {
+    width: 32%; /* 3 columnas con espacio */
+  } 
 }
 
 .masonry-item img {
   width: 100%;
   border-radius: 10px;
   display: block;
-  transition: border-radius 0.3s ease, border 0.3s ease;
 }
 
 /* =========================================
@@ -425,4 +443,134 @@ footer p { text-shadow: 0 1px 4px black; }
 
 .image-detail-modal-content .modal-header {
   border-bottom: 1px solid var(--border-color);
+}/* =========================================
+   13. MODAL DE NOTIFICACIN Y LOADER
+   ========================================= */
+
+.page-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 10, 10, 0.85);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1060; /* Encima de los modales de bootstrap */
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.page-loader.fade-out {
+    opacity: 0;
+}
+
+.page-loader .spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+#notificationModal .modal-content {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+/* =========================================
+   14. EFECTOS ESPECIALES (FX AVANZADOS)
+   ========================================= */
+
+/* --- Animaciones Base --- */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 15px var(--electric-blue); border-color: var(--electric-blue); }
+  50% { box-shadow: 0 0 30px var(--electric-blue); border-color: var(--white); }
+}
+
+@keyframes scan-rotate {
+  0% { transform: translateY(-100%) rotate(45deg); }
+  100% { transform: translateY(100%) rotate(45deg); }
+}
+
+/* --- Efecto 1: Gradient (Borde Gradiente) --- */
+/* Nota: Para imágenes redondas, este truco requiere un contenedor específico, 
+   pero aquí usaremos una versión simplificada compatible */
+.fx-gradient {
+  border: 4px solid transparent !important;
+  background: linear-gradient(#1a1a1a, #1a1a1a) padding-box,
+              linear-gradient(135deg, var(--electric-blue), #E63946, #ffc107) border-box !important;
+  /* El background-clip es clave para que el gradiente solo se vea en el borde */
+}
+
+/* --- Efecto 2: Glow (Neón) --- */
+.fx-glow {
+  border: 3px solid var(--electric-blue) !important;
+  box-shadow: 0 0 15px rgba(5, 176, 250, 0.5);
+  animation: pulse-glow 2s infinite;
+}
+
+/* --- Efecto 3: Scanner (Animado) --- */
+/* Este efecto requiere 'position: relative' y 'overflow: hidden' en el contenedor */
+/* --- Efecto 3: Scanner (Corregido para círculos) --- */
+.fx-scanner {
+  border: 2px solid var(--electric-blue) !important;
+  position: relative;
+  overflow: hidden; /* Esto corta la luz para que no se salga del círculo */
+  z-index: 1;
+  /* IMPORTANTE: Esto asegura que si la caja es redonda, el scanner sea redondo */
+  border-radius: inherit; 
+}
+
+.fx-scanner::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.8), transparent);
+  transform: rotate(45deg);
+  animation: scan-rotate 3s linear infinite;
+  opacity: 0.5; /* Un poco más visible */
+  pointer-events: none; 
+  z-index: 2;
+}
+/* =========================================
+   15. SCROLL TO TOP BUTTON
+   ========================================= */
+#scrollToTopBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  font-size: 1.5rem;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  z-index: 1040; /* Por debajo del navbar, pero por encima de la mayor�a del contenido */
+}
+
+#scrollToTopBtn.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+@media (max-width: 576px) {
+  #scrollToTopBtn {
+    width: 45px;
+    height: 45px;
+    font-size: 1.2rem;
+    bottom: 15px;
+    right: 15px;
+  }
 }
