@@ -1,69 +1,87 @@
-// js/session-manager.js
-document.addEventListener('DOMContentLoaded', async () => {
-    const supabase = window.supabaseClient;
-    
-    // Función para actualizar la UI de la barra de navegación
-    const updateNavUI = (user) => {
-        const navbarNav = document.querySelector('#navbarNav .navbar-nav');
-        const existingControls = document.getElementById('user-session-controls');
-        if (existingControls) {
-            existingControls.remove();
-        }
+// js/session-manager.js (MODULARIZADO y CORREGIDO)
 
-        const navContainer = navbarNav.parentElement; // El contenedor .collapse
+// Definimos la función globalmente para poder llamarla cuando el navbar cargue
+window.initSessionManager = async () => {
+    const supabase = window.supabaseClient;
+
+    // Elementos del DOM (Que ahora vienen del fetch)
+    const navGuest = document.getElementById('nav-guest');
+    const navUser = document.getElementById('nav-user');
+    const navPortfolioLink = document.getElementById('nav-portfolio-link');
+    
+    // Link estático de configuración (si existe en el menú principal)
+    const staticSettingsLink = document.querySelector('.navbar-nav .nav-link[href="settings.html"]');
+    
+    // Link activo (highlight)
+    const currentPage = window.location.pathname.split("/").pop() || 'index.html';
+    const activeLink = document.querySelector(`.navbar-nav .nav-link[href="${currentPage}"]`);
+    if(activeLink) activeLink.classList.add('active');
+
+
+    const updateNavUI = (user) => {
+        if (!navGuest || !navUser) return; // Seguridad si falta HTML
 
         if (user) {
-            // Usuario ha iniciado sesión
-            // Ocultar "Configuración" del menú principal si existe
-            const settingsLink = navbarNav.querySelector('a[href="settings.html"]');
-            if(settingsLink) settingsLink.parentElement.style.display = 'none';
+            // === USUARIO LOGUEADO ===
             
-            // Ocultar botón de Registro
-            const registerButton = navContainer.querySelector('a.btn-nav-register');
-            if(registerButton) registerButton.style.display = 'none';
+            // 1. Ocultar panel de invitados
+            navGuest.classList.add('d-none');
+            navGuest.classList.remove('d-flex');
 
-            // Crear nuevos controles
-            const sessionControls = document.createElement('div');
-            sessionControls.id = 'user-session-controls';
-            sessionControls.classList.add('d-flex', 'align-items-center', 'ms-lg-3');
-            sessionControls.innerHTML = `
-                <a href="settings.html" class="btn btn-outline-light btn-sm me-2">Mi Configuración</a>
-                <button id="logout-button" class="btn btn-danger btn-sm">Cerrar Sesión</button>
-            `;
+            // 2. Mostrar panel de usuario
+            navUser.classList.remove('d-none');
+            navUser.classList.add('d-flex');
             
-            navContainer.appendChild(sessionControls);
+            // 3. Ocultar link estático de configuración
+            if (staticSettingsLink) staticSettingsLink.parentElement.style.display = 'none';
 
-            // Añadir evento al botón de logout
-            const logoutButton = document.getElementById('logout-button');
-            logoutButton.addEventListener('click', async () => {
-                await supabase.auth.signOut();
-                window.location.href = 'index.html';
-            });
+            // 4. Actualizar el link "Mi Portfolio"
+            if (navPortfolioLink) {
+                navPortfolioLink.href = `portfolio.html?userId=${user.id}`;
+            }
+
+            // 5. Manejo del Botón Logout (CORREGIDO)
+            // Buscamos el botón actual en el DOM en este momento exacto
+            const currentLogoutBtn = document.getElementById('logout-button');
+            
+            if (currentLogoutBtn) {
+                // Clonamos el botón para limpiar cualquier listener anterior
+                const newBtn = currentLogoutBtn.cloneNode(true);
+                
+                // Si el botón tiene padre (está en el DOM), lo reemplazamos
+                if (currentLogoutBtn.parentNode) {
+                    currentLogoutBtn.parentNode.replaceChild(newBtn, currentLogoutBtn);
+                }
+                
+                // Añadimos el evento al nuevo botón
+                newBtn.addEventListener('click', async () => {
+                    await supabase.auth.signOut();
+                    window.location.href = 'index.html';
+                });
+            }
 
         } else {
-            // Usuario no ha iniciado sesión
-            const settingsLink = navbarNav.querySelector('a[href="settings.html"]');
-            if(settingsLink) settingsLink.parentElement.style.display = 'list-item';
-
-            const registerButton = navContainer.querySelector('a.btn-nav-register');
-            if(registerButton) registerButton.style.display = 'block';
-
-            // Crear el botón de login
-             const sessionControls = document.createElement('div');
-            sessionControls.id = 'user-session-controls';
-            sessionControls.classList.add('d-flex', 'align-items-center', 'ms-lg-3');
-            sessionControls.innerHTML = '<a href="login.html" class="btn btn-outline-primary ms-lg-3 mt-2 mt-lg-0">Login</a>';
+            // === USUARIO NO LOGUEADO ===
             
-            navContainer.appendChild(sessionControls);
+            // 1. Mostrar panel de invitados
+            navGuest.classList.remove('d-none');
+            navGuest.classList.add('d-flex');
+
+            // 2. Ocultar panel de usuario
+            navUser.classList.add('d-none');
+            navUser.classList.remove('d-flex');
+
+            // 3. Restaurar link estático
+            if (staticSettingsLink) staticSettingsLink.parentElement.style.display = 'block';
         }
     };
 
-    // Obtener la sesión actual y actualizar la UI
+    // Inicialización
     const { data: { session } } = await supabase.auth.getSession();
     updateNavUI(session?.user);
 
-    // Escuchar cambios en la sesión (login, logout)
+    // Escuchar cambios de sesión
     supabase.auth.onAuthStateChange((_event, session) => {
         updateNavUI(session?.user);
     });
-});
+};

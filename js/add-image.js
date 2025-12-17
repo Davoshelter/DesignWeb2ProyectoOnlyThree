@@ -25,14 +25,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         const description = imageDescriptionInput.value;
 
         if (!file) {
-            alert("Por favor, selecciona un archivo de imagen.");
+            showNotificationModal('Error', 'Por favor, selecciona un archivo de imagen.', 'error');
             return;
         }
 
         // Deshabilitar el botón de submit para evitar envíos múltiples
         const submitButton = addImageForm.querySelector('button[type="submit"]');
         submitButton.disabled = true;
-        submitButton.textContent = 'Subiendo...';
+        showLoader();
 
         try {
             // 3. Subir archivo a Supabase Storage
@@ -72,15 +72,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                 throw insertError;
             }
 
+            hideLoader();
+            showNotificationModal('¡Imagen Subida!', 'Tu imagen ha sido añadida al portfolio.', 'success', 2000);
+
             // 6. Redirigir al portfolio
-            window.location.href = `portfolio.html?userId=${user.id}`;
+            setTimeout(() => {
+                window.location.href = `portfolio.html?userId=${user.id}`;
+            }, 2000);
+
 
         } catch (error) {
+            hideLoader();
             console.error('Error en el proceso de subida:', error);
-            alert(`Hubo un error: ${error.message}`);
+            showNotificationModal('Error en la subida', `Hubo un error: ${error.message}`, 'error');
             // Rehabilitar el botón si hay un error
             submitButton.disabled = false;
-            submitButton.textContent = 'Añadir Imagen al Portfolio';
         }
     });
 });

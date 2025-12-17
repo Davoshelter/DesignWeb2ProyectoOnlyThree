@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault();
             const submitButton = registerForm.querySelector('button[type="submit"]');
             submitButton.disabled = true;
+            showLoader();
 
             const form = event.target;
             const email = form.email.value;
@@ -30,17 +31,17 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (signUpError) {
-                alert('Error en el registro: ' + signUpError.message);
+                hideLoader();
+                showNotificationModal('Error en el registro', signUpError.message, 'error');
                 submitButton.disabled = false;
             } else {
-                if (bsRegisterModal) {
-                    bsRegisterModal.show();
-                }
+                showNotificationModal('¡Registro Completado!', 'Bienvenido a OwnDesign. Serás redirigido para configurar tu perfil.', 'success', 2500);
                 
                 // Iniciar sesión automáticamente después del registro exitoso
                 const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
 
                 setTimeout(() => {
+                    hideLoader();
                     if (signInError) {
                          window.location.href = 'login.html';
                     } else {
@@ -64,28 +65,27 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault();
             const submitButton = loginForm.querySelector('button[type="submit"]');
             submitButton.disabled = true;
-
-            if (bsLoginModal) {
-                bsLoginModal.show();
-            }
+            showLoader();
 
             const form = event.target;
             const email = form.email.value;
             const password = form.password.value;
 
-            const { error } = await supabase.auth.signInWithPassword({
+            const { data, error } = await supabase.auth.signInWithPassword({
                 email,
                 password,
             });
             
             if (error) {
-                if (bsLoginModal) bsLoginModal.hide();
-                alert('Error al iniciar sesión: ' + error.message);
+                hideLoader();
+                showNotificationModal('Error al iniciar sesión', error.message, 'error');
                 submitButton.disabled = false;
             } else {
                 // La redirección ocurrirá naturalmente. Si queremos un delay:
                 setTimeout(() => {
-                    window.location.href = 'settings.html';
+                    hideLoader();
+                    // Redirigir al portfolio del usuario en lugar de a settings
+                    window.location.href = `portfolio.html?userId=${data.user.id}`;
                 }, 1000);
             }
         });
