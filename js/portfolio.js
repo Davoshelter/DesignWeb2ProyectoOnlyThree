@@ -13,12 +13,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // --- MODAL ---
     const imageDetailModalEl = document.getElementById('imageDetailModal');
-    // Verificamos si existe el modal antes de intentar iniciarlo (para evitar errores en otras páginas)
     let imageDetailModal;
     if (imageDetailModalEl) {
         imageDetailModal = new bootstrap.Modal(imageDetailModalEl);
         
-        // Preparar botón de eliminar en el modal
         const modalHeader = imageDetailModalEl.querySelector('.modal-header');
         if (modalHeader && !modalHeader.querySelector('.delete-btn-container')) {
             let deleteBtnContainer = document.createElement('div');
@@ -27,26 +25,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
     
-    // Elementos del modal
     const modalImage = document.getElementById('modal-image');
     const modalUserAvatar = document.getElementById('modal-user-avatar');
     const modalUserName = document.getElementById('modal-user-name');
     const modalImageDescription = document.getElementById('modal-image-description');
 
-    // 1. OBTENER ID y USUARIO ACTUAL
     const urlParams = new URLSearchParams(window.location.search);
     let profileId = urlParams.get('userId');
     
     const { data: { user: currentUser } } = await supabase.auth.getUser();
 
-    // SOLUCIÓN: Si no hay ID en la URL...
     if (!profileId) {
         if (currentUser) {
-            // ...pero estás logueado, redirigir a TU portfolio
             window.location.href = `portfolio.html?userId=${currentUser.id}`;
             return;
         } else {
-            // ...y no estás logueado, error
             displayError("Usuario no especificado.", true);
             return;
         }
@@ -54,7 +47,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     showLoader();
 
-    // 2. CARGAR DATOS (Usando tu columna 'uploaded_at')
     const [profileResponse, galleryResponse] = await Promise.all([
         supabase.from('profiles').select('*').eq('id', profileId).single(),
         supabase.from('gallery_images')
@@ -66,9 +58,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const { data: profile, error: profileError } = profileResponse;
     const { data: galleryImages, error: galleryError } = galleryResponse;
     
-    // El loader se oculta dentro de renderGallery, después de que imagesLoaded termina.
-
-    // Si hay un error, ocultamos el loader y mostramos el mensaje.
     if (profileError || !profile) {
         hideLoader(); 
         console.error('Error:', profileError);
@@ -76,7 +65,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    // 3. RENDERIZAR
     applyUserData(profile);
     applySettings(profile);
     renderGallery(profile, galleryImages || []);
@@ -113,7 +101,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </a>
             `;
             
-            // Ocultar botón estático si existe
             const staticBtn = header.querySelector('a[href="settings.html"]');
             if(staticBtn) staticBtn.style.display = 'none';
             
@@ -124,7 +111,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     function applyUserData(profileData) {
         if (pageTitle) pageTitle.textContent = `${profileData.name} | OwnDesign`;
         if (userNameElement) userNameElement.textContent = profileData.name;
-        // Fallback: Si no hay 'about', usa 'title' (que vi en tu SQL)
         if (userBioElement) userBioElement.textContent = profileData.about || profileData.title || 'Creador de contenido';
         
         if (profileImage) {
@@ -135,39 +121,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function applySettings(p) {
-        // Colores y Fuentes
         if (p.secondary_color) {
             body.style.color = p.secondary_color;
             document.querySelectorAll('h1, h2, h3, p').forEach(el => el.style.color = p.secondary_color);
         }
         const font = p.font_family ? p.font_family.replace(/"/g, "'") : "'Arial', sans-serif";
         body.style.fontFamily = font;
-        let fSize = p.font_size || 16; // Usar número por defecto
+        let fSize = p.font_size || 16; 
         if (!fSize.toString().includes('px')) fSize += 'px';
         root.style.fontSize = fSize;
         root.style.setProperty('--electric-blue', p.primary_color || '#8A2BE2');
 
-        // === APLICAR EFECTOS GLOBALES AL PERFIL ===
         const profileWrapper = document.getElementById('profile-wrapper');
 
         if (profileImage && profileWrapper) {
-            // 1. Redondeo fijo a 50% para un círculo perfecto.
             const borderRadius = '50%';
             profileImage.style.borderRadius = borderRadius;
             profileWrapper.style.borderRadius = borderRadius;
-            
-            // 2. Limpiar clases y estilos previos
             profileWrapper.classList.remove('fx-glow', 'fx-gradient', 'fx-scanner');
             profileWrapper.style.border = '';
             profileImage.style.border = ''; 
 
-            // 3. Aplicar efecto global o borde estándar global
-            const globalEffect = p.gallery_effect; // Se usa el efecto de galería como global
+            const globalEffect = p.gallery_effect; 
             if (globalEffect && globalEffect !== 'none') {
-                // El efecto va al contenedor (wrapper)
                 profileWrapper.classList.add(globalEffect);
             } else {
-                // Sin efecto especial: Borde normal en la imagen usando valores de galería
                 const frameWidth = p.gallery_frame_width || 0;
                 const frameColor = p.gallery_frame_color || 'transparent';
                 profileImage.style.border = `${frameWidth}px solid ${frameColor}`;
@@ -181,14 +159,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (images.length === 0) {
             galleryGrid.innerHTML = `<div class="col-12 text-center py-5"><p class="text-white-50 mt-3">Aún no hay imágenes.</p></div>`;
-            hideLoader(); // Ocultar si no hay imágenes
+            hideLoader(); 
             return;
         }
 
         const userAvatar = profileImage.src;
         const gEffect = profileData.gallery_effect;
 
-        // 1. Crear y añadir todos los elementos a la grilla
         images.forEach(imgData => {
             const item = document.createElement('div');
             item.className = 'masonry-item fade-in-up';
@@ -198,19 +175,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             imgEl.src = `${imgData.image_url}?width=600&quality=80`;
             imgEl.alt = imgData.title || 'Imagen';
             imgEl.loading = 'lazy';
-            imgEl.className = 'shadow-lg'; // Clase base para la sombra
+            imgEl.className = 'shadow-lg'; 
 
-            // Lógica de estilos y efectos (CORREGIDA)
-            // Se aplica a la IMAGEN, no al 'item'
             if (gEffect === 'fx-glow' || gEffect === 'fx-gradient') {
                 imgEl.classList.add(gEffect);
                 imgEl.style.border = ''; 
             } else if (gEffect === 'fx-scanner') {
-                // El efecto Scanner es especial, se aplica al contenedor para que funcione el 'overflow:hidden'
                 item.classList.add(gEffect);
                 imgEl.style.border = 'none';
             }
-            else { // Borde estándar o sin efecto
+            else { 
                 const frameColor = profileData.gallery_frame_color || 'var(--border-color)';
                 const frameWidth = profileData.gallery_frame_width || 0;
                 imgEl.style.border = `${frameWidth}px solid ${frameColor}`;
@@ -224,20 +198,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             galleryGrid.appendChild(item);
         });
 
-        // 2. Esperar a que todas las imágenes se carguen
         const imgLoad = imagesLoaded(galleryGrid);
         
         imgLoad.on('done', function() {
-            hideLoader(); // Ocultar loader aquí
+            hideLoader(); 
             new Masonry(galleryGrid, {
                 itemSelector: '.masonry-item',
                 percentPosition: true,
-                gutter: 16 // Un poco más de espacio
+                gutter: 16 
             });
         });
 
         imgLoad.on('fail', function() {
-            hideLoader(); // Ocultar loader también en caso de error
+            hideLoader(); 
             console.error("Una o más imágenes no pudieron cargarse.");
         });
     }
@@ -252,29 +225,38 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         const deleteBtnContainer = imageDetailModalEl.querySelector('.delete-btn-container');
         if (deleteBtnContainer) {
-            deleteBtnContainer.innerHTML = ''; // Limpiar
+            deleteBtnContainer.innerHTML = ''; 
             
-            // Si soy el dueño, mostrar botón borrar
             if (currentUser && currentUser.id === profileData.id) {
                 const deleteBtn = document.createElement('button');
                 deleteBtn.className = 'btn btn-outline--danger btn-sm d-flex align-items-center gap-2';
                 deleteBtn.innerHTML = '<i class="bi bi-trash-fill"></i> Eliminar';
-                deleteBtn.onclick = () => deleteImage(imgData, deleteBtn);
+                
+                // INTEGRACIÓN DE MODAL DE CONFIRMACIÓN
+                deleteBtn.onclick = () => {
+                    const confirmModalEl = document.getElementById('confirmDeleteModal');
+                    const confirmModal = new bootstrap.Modal(confirmModalEl);
+                    const confirmBtn = document.getElementById('confirmDeleteBtn');
+                    
+                    confirmBtn.onclick = async () => {
+                        confirmModal.hide(); 
+                        await deleteImage(imgData, deleteBtn);
+                    };
+                    confirmModal.show();
+                };
+
                 deleteBtnContainer.appendChild(deleteBtn);
             }
         }
-
         imageDetailModal.show();
     }
 
     async function deleteImage(imgData, btnElement) {
-        if(!confirm('¿Estás seguro de eliminar esta imagen?')) return;
-
+        // Se eliminó el confirm() nativo aquí
         btnElement.disabled = true;
-        btnElement.innerHTML = 'Borrando...';
+        btnElement.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Borrando...';
 
         try {
-            // 1. Borrar de Storage
             const urlObj = new URL(imgData.image_url);
             const pathParts = urlObj.pathname.split('/imagenes/');
             
@@ -283,7 +265,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 await supabase.storage.from('imagenes').remove([storagePath]);
             }
 
-            // 2. Borrar de DB
             const { error: dbError } = await supabase
                 .from('gallery_images')
                 .delete()
@@ -294,36 +275,28 @@ document.addEventListener('DOMContentLoaded', async () => {
             imageDetailModal.hide();
             showNotificationModal('Imagen eliminada', 'Se borró correctamente.', 'success');
             
-            // Recargar para actualizar la grilla
-            setTimeout(() => window.location.reload(), 500);
+            setTimeout(() => window.location.reload(), 1000);
 
         } catch (error) {
             console.error(error);
             showNotificationModal('Error', 'No se pudo eliminar.', 'error');
             btnElement.disabled = false;
-            btnElement.innerHTML = 'Error';
+            btnElement.innerHTML = '<i class="bi bi-trash-fill"></i> Error';
         }
     }
 
-    // --- SCROLL TO TOP BUTTON LOGIC ---
     const scrollToTopBtn = document.getElementById('scrollToTopBtn');
-
     if (scrollToTopBtn) {
-        // Show/Hide button on scroll
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 300) { // Show after scrolling 300px
+            if (window.scrollY > 300) { 
                 scrollToTopBtn.classList.add('show');
             } else {
                 scrollToTopBtn.classList.remove('show');
             }
         });
 
-        // Scroll to top on click
         scrollToTopBtn.addEventListener('click', () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     }
 });
