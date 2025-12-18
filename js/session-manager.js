@@ -1,87 +1,105 @@
-// js/session-manager.js (MODULARIZADO y CORREGIDO)
+// js/session-manager.js
 
-// Definimos la función globalmente para poder llamarla cuando el navbar cargue
+/**
+ * Este archivo es el "gestor de estado de sesión" para la interfaz de usuario.
+ * Su responsabilidad es mantener la barra de navegación (navbar) sincronizada
+ * con el estado de autenticación del usuario (si está logueado o no).
+ * 
+ * Es el complemento de 'navbar-loader.js'.
+ * El flujo es:
+ * 1. navbar-loader.js carga el HTML del navbar.
+ * 2. Una vez cargado, llama a la función `initSessionManager` de este archivo.
+ * 3. Este script, entonces, toma control del DOM del navbar y lo ajusta.
+ */
+
+// --- INICIALIZADOR GLOBAL ---
+// Envolvemos toda la lógica en una función global `window.initSessionManager`.
+// Esto es CRUCIAL porque los elementos del navbar no existen en el DOM hasta que 
+// 'navbar-loader.js' los inyecta. Esta función es llamada explícitamente
+// por 'navbar-loader.js' justo después de inyectar el HTML.
 window.initSessionManager = async () => {
     const supabase = window.supabaseClient;
 
-    // Elementos del DOM (Que ahora vienen del fetch)
-    const navGuest = document.getElementById('nav-guest');
-    const navUser = document.getElementById('nav-user');
-    const navPortfolioLink = document.getElementById('nav-portfolio-link');
+    // --- SELECCIÓN DE ELEMENTOS DEL NAVBAR ---
+    // Estos elementos fueron cargados dinámicamente.
+    const navGuest = document.getElementById('nav-guest'); // Contenedor para botones de invitado (Login, Register).
+    const navUser = document.getElementById('nav-user');   // Contenedor para botones de usuario (Mi Portfolio, Logout).
+    const navPortfolioLink = document.getElementById('nav-portfolio-link'); // Enlace específico a "Mi Portfolio".
     
-    // Link estático de configuración (si existe en el menú principal)
-    const staticSettingsLink = document.querySelector('.navbar-nav .nav-link[href="settings.html"]');
-    
-    // Link activo (highlight)
+    // Resaltado del enlace de la página activa.
     const currentPage = window.location.pathname.split("/").pop() || 'index.html';
     const activeLink = document.querySelector(`.navbar-nav .nav-link[href="${currentPage}"]`);
-    if(activeLink) activeLink.classList.add('active');
+    if(activeLink) {
+        activeLink.classList.add('active'); // Añade la clase 'active' de Bootstrap.
+    }
 
-
+    /**
+     * Función central que actualiza la UI del navbar basado en la presencia de un usuario.
+     * @param {object|null} user - El objeto 'user' de Supabase si está logueado, o 'null' si no lo está.
+     */
     const updateNavUI = (user) => {
-        if (!navGuest || !navUser) return; // Seguridad si falta HTML
+        // Medida de seguridad por si los elementos del navbar no se cargaron correctamente.
+        if (!navGuest || !navUser) return;
 
         if (user) {
-            // === USUARIO LOGUEADO ===
+            // --- ESTADO: USUARIO LOGUEADO ---
             
-            // 1. Ocultar panel de invitados
+            // 1. Ocultar el panel de invitados y mostrar el panel de usuario.
             navGuest.classList.add('d-none');
-            navGuest.classList.remove('d-flex');
-
-            // 2. Mostrar panel de usuario
             navUser.classList.remove('d-none');
-            navUser.classList.add('d-flex');
             
-            // 3. Ocultar link estático de configuración
-            if (staticSettingsLink) staticSettingsLink.parentElement.style.display = 'none';
-
-            // 4. Actualizar el link "Mi Portfolio"
+            // 2. Actualizar el enlace "Mi Portfolio" para que apunte al portfolio del usuario actual.
             if (navPortfolioLink) {
                 navPortfolioLink.href = `portfolio.html?userId=${user.id}`;
             }
 
-            // 5. Manejo del Botón Logout (CORREGIDO)
-            // Buscamos el botón actual en el DOM en este momento exacto
+            // 3. MANEJO ESPECIAL DEL BOTÓN DE LOGOUT
+            // Buscamos el botón en el DOM en este preciso momento.
             const currentLogoutBtn = document.getElementById('logout-button');
-            
             if (currentLogoutBtn) {
-                // Clonamos el botón para limpiar cualquier listener anterior
+                // PROBLEMA: Si solo añadiéramos un `addEventListener`, en cada cambio de estado
+                // (aunque no sea visible para el usuario) se podría añadir un nuevo listener,
+                // resultando en múltiples listeners en el mismo botón.
+                // SOLUCIÓN: Clonamos el botón. Esto crea un nuevo nodo idéntico pero SIN listeners.
                 const newBtn = currentLogoutBtn.cloneNode(true);
                 
-                // Si el botón tiene padre (está en el DOM), lo reemplazamos
-                if (currentLogoutBtn.parentNode) {
-                    currentLogoutBtn.parentNode.replaceChild(newBtn, currentLogoutBtn);
-                }
+                // Reemplazamos el botón antiguo por nuestro clon limpio.
+                currentLogoutBtn.parentNode.replaceChild(newBtn, currentLogoutBtn);
                 
-                // Añadimos el evento al nuevo botón
+                // Ahora, añadimos el único listener de 'click' a nuestro nuevo botón.
                 newBtn.addEventListener('click', async () => {
-                    await supabase.auth.signOut();
+                    await supabase.auth.signOut(); // Cerramos la sesión en Supabase.
+                    // Al cerrar sesión, onAuthStateChange se disparará, pero también redirigimos
+                    // manualmente por si acaso y para una respuesta más rápida.
                     window.location.href = 'index.html';
                 });
             }
 
         } else {
-            // === USUARIO NO LOGUEADO ===
+            // --- ESTADO: USUARIO NO LOGUEADO (INVITADO) ---
             
-            // 1. Mostrar panel de invitados
+            // Invertimos la visibilidad: mostramos el panel de invitados y ocultamos el de usuario.
             navGuest.classList.remove('d-none');
-            navGuest.classList.add('d-flex');
-
-            // 2. Ocultar panel de usuario
             navUser.classList.add('d-none');
-            navUser.classList.remove('d-flex');
-
-            // 3. Restaurar link estático
-            if (staticSettingsLink) staticSettingsLink.parentElement.style.display = 'block';
         }
     };
 
-    // Inicialización
-    const { data: { session } } = await supabase.auth.getSession();
-    updateNavUI(session?.user);
+    // --- EJECUCIÓN INICIAL Y SUSCRIPCIÓN A CAMBIOS ---
 
-    // Escuchar cambios de sesión
+    // 1. OBTENER SESIÓN INICIAL:
+    // Al cargar la página, primero comprobamos si ya existe una sesión activa.
+    const { data: { session } } = await supabase.auth.getSession();
+    // Y llamamos a nuestra función de UI por primera vez con el resultado.
+    updateNavUI(session?.user); // El ?. es opcional chaining, previene error si session es null.
+
+    // 2. ESCUCHAR CAMBIOS DE ESTADO:
+    // `onAuthStateChange` es un "oyente" de Supabase. Se ejecuta automáticamente
+    // cada vez que un usuario inicia sesión, cierra sesión o su token se refresca.
+    // Esto es lo que hace que nuestra UI sea reactiva y cambie en tiempo real sin
+    // necesidad de recargar la página.
     supabase.auth.onAuthStateChange((_event, session) => {
+        // Cuando el estado cambia, simplemente volvemos a llamar a nuestra función de UI
+        // con la información de la nueva sesión.
         updateNavUI(session?.user);
     });
 };
